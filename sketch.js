@@ -1,23 +1,22 @@
-var p, edit, btn;
+var p, p2, edit, btn;
 
 function setup() {
 	noCanvas();
 	noLoop();
-	edit = createInput('Qh 5c Td');
+	edit = createInput('2c 2dAh   As');
 	btn = createButton("ввод");
 	p = createP('введите строку карт');
+	p2 = createP('');
 	
 	btn.mouseReleased(onPressBtn);
 	edit.input(onInput);
 }
 
 function onPressBtn() {
-	var obj = readHand(edit.value());
-	if(obj.error) {
-		p.html(obj.message);
-	} else {
-		p.html(getHandString(obj.hand));
-	}
+	p.html("Какая-то ошибка");
+	var hand = readHand(edit.value());
+	p.html(getHandString(hand));
+	p2.html(hand.join(', '));
 }
 
 function onInput() {
@@ -45,15 +44,9 @@ function isWrongHand(hand) {
 	return false;
 }
 
-const compareConst = {
-	EQUAL: 0,
-	GREATER: 1,
-	LOWER: 2,
-	WRONG: 3
-};
-
 function compareHands(hand1, hand2) {
 	var unionHand = hand1 + hand2; // объединяем два множества
+	
 	if(isWrongHand(unionHand)) {
 		// руки не могут содержать одинаковые карты
 		return compareConst.WRONG;
@@ -62,6 +55,7 @@ function compareHands(hand1, hand2) {
 	// hand2 = "2♥ 3♥ 4♥ 5♥ 6♥"
 	
 	// в этой функции определяем какой набор из 5 карт лучше
+	// return compareConst.something
 }
 
 // ********** CARDS TO STRING **************
@@ -98,49 +92,73 @@ function readFromArray(arr, ch) {
 			return i;
 		}
 	}
-	return -1;
+	return NOT_FOUND;
+}
+
+function readRank(ch) {
+	return readFromArray(ranks, ch);
+}
+
+function readSuit(ch) {
+	return readFromArray(suits, ch);
 }
 
 function rankSuitToNumber(rank, suit) {
 	return suit * ranks.length + rank;
 }
 
+function deleteSpaces(handString) {
+	return handString.split(' ').join('');
+}
+
 function readHand(handString) {
+	var handArray = readHandToArray(handString);
+	return handArrayToNumbers(handArray);
+}
+
+function rankAndSuitToPair(rankAndSuit) {
+	var rank = readRank(rankAndSuit[0]);
+	var suit = readSuit(rankAndSuit[1]);
+	return {rank, suit};
+}
+
+function handArrayToNumbers(handArray) {
 	var hand = [];
-	var rank, suit;
-	const READ_RANK = 0;
-	      READ_SUIT = 1;
-	var q = READ_RANK;
-	var obj = {error: true};
-	for(var i = 0; i < handString.length; i++) {
-		var ch = handString[i];
-		if(ch == ' ') {
-			continue;
+	for(var i = 0; i < handArray.length; i++) {
+		var rankAndSuit = handArray[i];
+		var err = checkRankAndSuit(rankAndSuit);
+		if(err) {
+			throw new Error("Ошибка чтения в функции handArrayToNumbers: " + handArray);
 		}
-		
-		if(q == READ_RANK) {
-			rank = readFromArray(ranks, ch);
-			if(rank == -1) {
-				obj.message = ("Ошибка чтения rank в функции readHand: " + handString);
-				return obj;
-			}
-		} else 
-		if (q == READ_SUIT) {
-			suit = readFromArray(suits, ch);
-			if(suit == -1) {
-				obj.message = ("Ошибка чтения suit в функции readHand: " + handString);
-				return obj;
-			}
-			hand.push(rankSuitToNumber(rank, suit));
-		}
-		q = 1 - q; // q = (q + 1) % (READ_SUIT + 1);
+		var pair = rankAndSuitToPair(rankAndSuit);
+		hand.push(rankSuitToNumber(pair.rank, pair.suit));
+	}
+	return hand;
+}
+
+function checkRankAndSuit(rankAndSuit) {
+	var pair = rankAndSuitToPair(rankAndSuit);
+	if(pair.rank == NOT_FOUND || pair.suit == NOT_FOUND) {
+		return true;
+	}
+	return false;
+}
+
+function readHandToArray(handString) {
+	var handArray = [];
+	handString = deleteSpaces(handString);
+	
+	if(handString.length % 2 == 1) {
+		throw new Error("Требуется указать масть карты в функции readHandToArray: " + handString);
 	}
 	
-	if(q == READ_SUIT)
-	{
-		obj.message = "Требуется указать масть карты в функции readHand: " + handString;
-		return obj;
+	for(var i = 0; i < handString.length; i += 2) {
+		var rankAndSuit = handString.substring(i, i + 2);
+		var err = checkRankAndSuit(rankAndSuit);
+		if(err) {
+			throw new Error("Ошибка чтения в функции readHandToArray: " + handString);
+		}
+		handArray.push(rankAndSuit);
 	}
-	
-	return {hand: hand, error: false};
+	return handArray;
 }
