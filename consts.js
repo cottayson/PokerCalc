@@ -4,21 +4,23 @@ const ranks = ["2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"];
 var suits = ["c", "d", "h", "s"];
 const suitsWithUnicode = ["c♣", "d♦", "h♥", "s♠"];
 // diamonds (♦), clubs (♣), hearts (♥) and spades (♠)
-const handClassString = [
-    "NOTHING",
-	"HIGH_CARD",
-	"ONE_PAIR",
-	"TWO_PAIR",
-	"THREE_OF_A_KIND",
-	"STRAIGHT",
-	"FLUSH",
-	"FULL_HOUSE",
-	"FOUR_OF_A_KIND",
-	"STRAIGHT_FLUSH",
-	"ROYAL_FLUSH"
-];
+const handClassString = {
+  "-1": "WRONG_HAND",
+  0: "NOTHING",
+	1: "HIGH_CARD",
+	2: "ONE_PAIR",
+	3: "TWO_PAIR",
+	4: "THREE_OF_A_KIND",
+	5: "STRAIGHT",
+	6: "FLUSH",
+	7: "FULL_HOUSE",
+	8: "FOUR_OF_A_KIND",
+	9: "STRAIGHT_FLUSH",
+	10: "ROYAL_FLUSH"
+};
 
 const handClassConst = {
+  WRONG_HAND: -1,
 	NOTHING: 0,
 	HIGH_CARD: 1,
 	ONE_PAIR: 2,
