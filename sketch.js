@@ -1,22 +1,22 @@
 var p0, p1, p2, pBoard, edit1, edit2, editBoard, btn;
 
 function setup() {
-	noCanvas();
-	noLoop();
+  noCanvas();
+  noLoop();
 	
   p0 = createP('c♣, d♦, h♥, s♠');
   
-	p1 = createP('игрок 1');
-	edit1 = createInput('Ts Jc');
+  p1 = createP('игрок 1'); 
+  edit1 = createInput('Ts Jc');
   
-	p2 = createP('игрок 2');
-	edit2 = createInput('Kh As');
+  p2 = createP('игрок 2');
+  edit2 = createInput('Kh As');
   
   pBoard = createP('стол');
   editBoard = createInput('2c 5c 8s Td 3h');
   
   createElement('br');
-	btn = createButton('ввод');
+  btn = createButton('ввод');
   createElement('br');
   pClass = createP('класс');
   
@@ -25,8 +25,8 @@ function setup() {
 }
 
 function onPressBtn() {
-	pClass.html("ошибка чтения hand1");
-	var hand1 = readHand(edit1.value());
+  pClass.html("ошибка чтения hand1");
+  var hand1 = readHand(edit1.value());
   
   pClass.html("ошибка чтения hand2");
   var hand2 = readHand(edit2.value());
@@ -41,12 +41,12 @@ function onPressBtn() {
   } else {
     str = handClassString[numberOfClass];
   }
-	pClass.html("на столе " + str);
+  pClass.html("на столе " + str);
 }
 
 function isWrongHand(hand) {
-	// если карты в множестве hand одинаковы, то true
-	return false;
+  // если карты в множестве hand одинаковы, то true
+  return false;
 }
 
 function isFlushSuits(handSuits) {
@@ -70,7 +70,7 @@ function isStraightRanks(handRanks) {
 }
 
 function getFiveHandClass(hand) {
-	var handSuits = hand.map(getSuit);
+  var handSuits = hand.map(getSuit);
   var handRanks = hand.map(getRank);
   
   handRanks.sort();
@@ -145,120 +145,120 @@ function getHandClass(hand) {
 }
 
 function compareHands(hand1, hand2) {
-	var unionHand = hand1.concat(hand2); // объединяем два множества
+  var unionHand = hand1.concat(hand2); // объединяем два множества
 	
-	if(isWrongHand(unionHand)) {
-		// руки не могут содержать одинаковые карты
-		return compareConst.WRONG;
+  if(isWrongHand(unionHand)) {
+    // руки не могут содержать одинаковые карты
+    return compareConst.WRONG;
 	}
-	// hand1 = "5♥ 6♥ 7♥ 8♥ 9♥"
-	// hand2 = "2♥ 3♥ 4♥ 5♥ 6♥"
+  // hand1 = "5♥ 6♥ 7♥ 8♥ 9♥"
+  // hand2 = "2♥ 3♥ 4♥ 5♥ 6♥"
 	
-	// в этой функции определяем какой набор из 5 карт лучше
-	// return compareConst.something
+  // в этой функции определяем какой набор из 5 карт лучше
+  // return compareConst.something
 }
 
 // ********** CARDS TO STRING **************
 
 function getSuit(n) {
-	return floor(n / ranks.length);
+  return floor(n / ranks.length);
 }
 
 function getRank(n) {
-	return n % ranks.length;
+  return n % ranks.length;
 }
 
 function getCardStringFromNumber(n) {
-	var rank = getRank(n);
-	var suit = getSuit(n);
-	return getCardString(rank, suit);
+  var rank = getRank(n);
+  var suit = getSuit(n);
+  return getCardString(rank, suit);
 }
 
 function getCardString(rank, suit) {
-	return ranks[rank] + suits[suit];
+  return ranks[rank] + suits[suit];
 }
 
 function getHandString(hand, options) {
-	var str = "";
-	for(var i = 0; i < hand.length; i++) {
-		str += getCardStringFromNumber(hand[i]) + " ";
-	}
-	return str;
+  var str = "";
+  for(var i = 0; i < hand.length; i++) {
+    str += getCardStringFromNumber(hand[i]) + " ";
+  }
+  return str;
 }
 // ********** READ CARDS **************
 function readFromArray(arr, ch) {
-	for(var i = 0; i < arr.length; i++) {
-		if(arr[i] == ch) {
-			return i;
-		}
-	}
-	return NOT_FOUND;
+  for(var i = 0; i < arr.length; i++) {
+    if(arr[i] == ch) {
+      return i;
+    }
+  }
+  return NOT_FOUND;
 }
 
 function readRank(ch) {
-	return readFromArray(ranks, ch);
+  return readFromArray(ranks, ch);
 }
 
 function readSuit(ch) {
-	return readFromArray(suits, ch);
+  return readFromArray(suits, ch);
 }
 
 function rankSuitToNumber(rank, suit) {
-	return suit * ranks.length + rank;
+  return suit * ranks.length + rank;
 }
 
 function deleteSpaces(handString) {
-	return handString.split(' ').join('');
+  return handString.split(' ').join('');
 }
 
 function readHand(handString) {
-	var handArray = readHandToArray(handString);
-	return handArrayToNumbers(handArray);
+  var handArray = readHandToArray(handString);
+  return handArrayToNumbers(handArray);
 }
 
 function rankAndSuitToPair(rankAndSuit) {
-	var rank = readRank(rankAndSuit[0]);
-	var suit = readSuit(rankAndSuit[1]);
-	return {rank, suit};
+  var rank = readRank(rankAndSuit[0]);
+  var suit = readSuit(rankAndSuit[1]);
+  return {rank, suit};
 }
 
 function handArrayToNumbers(handArray) {
-	var hand = [];
-	for(var i = 0; i < handArray.length; i++) {
-		var rankAndSuit = handArray[i];
-		var err = checkRankAndSuit(rankAndSuit);
-		if(err) {
-			throw new Error("Ошибка чтения в функции handArrayToNumbers: " + handArray);
-		}
-		var pair = rankAndSuitToPair(rankAndSuit);
-		hand.push(rankSuitToNumber(pair.rank, pair.suit));
-	}
-	return hand;
+  var hand = [];
+  for(var i = 0; i < handArray.length; i++) {
+    var rankAndSuit = handArray[i];
+    var err = checkRankAndSuit(rankAndSuit);
+    if(err) {
+      throw new Error("Ошибка чтения в функции handArrayToNumbers: " + handArray);
+    }
+    var pair = rankAndSuitToPair(rankAndSuit);
+    hand.push(rankSuitToNumber(pair.rank, pair.suit));
+  }
+  return hand;
 }
 
 function checkRankAndSuit(rankAndSuit) {
-	var pair = rankAndSuitToPair(rankAndSuit);
-	if(pair.rank == NOT_FOUND || pair.suit == NOT_FOUND) {
-		return true;
-	}
-	return false;
+  var pair = rankAndSuitToPair(rankAndSuit);
+  if(pair.rank == NOT_FOUND || pair.suit == NOT_FOUND) {
+    return true;
+  }
+  return false;
 }
 
 function readHandToArray(handString) {
-	var handArray = [];
-	handString = deleteSpaces(handString);
+  var handArray = [];
+  handString = deleteSpaces(handString);
 	
-	if(handString.length % 2 == 1) {
-		throw new Error("Требуется указать масть карты в функции readHandToArray: " + handString);
-	}
+  if(handString.length % 2 == 1) {
+    throw new Error("Требуется указать масть карты в функции readHandToArray: " + handString);
+  }
 	
-	for(var i = 0; i < handString.length; i += 2) {
-		var rankAndSuit = handString.substring(i, i + 2);
-		var err = checkRankAndSuit(rankAndSuit);
-		if(err) {
-			throw new Error("Ошибка чтения в функции readHandToArray: " + handString);
-		}
-		handArray.push(rankAndSuit);
-	}
-	return handArray;
+  for(var i = 0; i < handString.length; i += 2) {
+    var rankAndSuit = handString.substring(i, i + 2);
+    var err = checkRankAndSuit(rankAndSuit);
+    if(err) {
+      throw new Error("Ошибка чтения в функции readHandToArray: " + handString);
+    }
+    handArray.push(rankAndSuit);
+  }
+  return handArray;
 }
