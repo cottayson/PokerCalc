@@ -21,7 +21,7 @@ function setup() {
   pClass = createP('класс');
   
   
-	btn.mouseReleased(onPressBtn);
+  btn.mouseReleased(onPressBtn);
 }
 
 function onPressBtn() {
@@ -122,8 +122,8 @@ function getHandClass(hand) {
   if(isWrongHand(hand)) {
     return handClassConst.WRONG_HAND;
   }
-	// hand = "8♥ 5♣ 3♥ 2♠ 3♥" -> one pair
-	// начинаем проверку с ROYAL_FLASH и идем назад
+  // hand = "8♥ 5♣ 3♥ 2♠ 3♥" -> one pair
+  // начинаем проверку с ROYAL_FLASH и идем назад
   
 
   
@@ -150,7 +150,7 @@ function compareHands(hand1, hand2) {
   if(isWrongHand(unionHand)) {
     // руки не могут содержать одинаковые карты
     return compareConst.WRONG;
-	}
+  }
   // hand1 = "5♥ 6♥ 7♥ 8♥ 9♥"
   // hand2 = "2♥ 3♥ 4♥ 5♥ 6♥"
 	

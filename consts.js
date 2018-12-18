@@ -1,7 +1,7 @@
 // https://en.wikipedia.org/wiki/Pip_(counting)
 const ALLCARDS = 52;
 const ranks = ["2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"];
-var suits = ["c", "d", "h", "s"];
+const suits = ["c", "d", "h", "s"];
 const suitsWithUnicode = ["c♣", "d♦", "h♥", "s♠"];
 // diamonds (♦), clubs (♣), hearts (♥) and spades (♠)
 const handClassString = {
