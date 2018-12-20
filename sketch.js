@@ -1,7 +1,8 @@
-var p0, p1, p2, pBoard, 
+'use strict'
+var p0, p1, p2, pBoard, pClass,
     edit1, edit2, editBoard, 
     btn;
-
+// !!! сравнить одинаковые комбинации compareEqualClasses()
 function setup() {
   noCanvas();
   noLoop();
@@ -73,6 +74,16 @@ function isFlushSuits(handSuits) {
 
 // СТРАЙТ
 function isStraightRanks(handRanks) {
+  // ['2', '3', '4', '5', 'A'] = [0, 1, 2, 3, 12]
+  if(handRanks[4] == ranks.length - 1 &&
+     handRanks[0] == 0 &&
+     handRanks[1] == 1 &&
+     handRanks[2] == 2 &&
+     handRanks[3] == 3)
+  {
+    return true;
+  }
+    
   var r = handRanks[0];
   for(var i = 0; i < handRanks.length; i++) {
     if(handRanks[i] != r++) {
@@ -93,12 +104,12 @@ function getIndexOf(elem, countArr) {
 }
 
 function rankArrayToCounts(rankArray) {
-/*[1, 2, 3, 4, 5] => [1, 1, 1, 1, 1] => [5] => NOTHING or HIGH_CARD 
-  [1, 2, 10, 10, 5] => [1, 1, 1, 2] => [3, 1](три единицы одна двойка) => ONE_PAIR
-  [2, 2, 10, 10, 5] => [1, 2, 2] => [1, 2] => TWO_PAIR
-  [7, 7, 7, 8, 9] => [1, 1, 3] => [2, 0, 1] => THREE_OF_A_KIND
-  [7, 7, 7, 8, 8] => [2, 3] => [0, 1, 1] => FULL_HOUSE
-  [3, 3, 3, 3, 2] => [1, 4] => [1, 0, 0, 1] => FOUR_OF_A_KIND
+/*[1, 2, 3, 4, 5] => [1, 1, 1, 1, 1] => NOTHING or HIGH_CARD 
+  [1, 2, 10, 10, 5] => [1, 1, 1, 2] => ONE_PAIR
+  [2, 2, 10, 10, 5] => [1, 2, 2] => TWO_PAIR
+  [7, 7, 7, 8, 9] => [1, 1, 3] => THREE_OF_A_KIND
+  [7, 7, 7, 8, 8] => [2, 3] => FULL_HOUSE
+  [3, 3, 3, 3, 2] => [1, 4] => FOUR_OF_A_KIND
   */
   var b = [];
   for(var i = 0; i < rankArray.length; i++) {
@@ -129,12 +140,12 @@ function getFiveHandClass(hand) {
   
   console.log("handRanks = ", handRanks);
   
-  var isHighCard = (handRanks[4] == ranks.length - 1);
+  var aceIsExist = (handRanks[4] == ranks.length - 1);
   var isStraight = isStraightRanks(handRanks);
   var isFlush = isFlushSuits(handSuits);
   
   
-  if(isStraight && isFlush && isHighCard) {
+  if(isStraight && isFlush && aceIsExist) {
     return handClassConst.ROYAL_FLUSH;
   }
   
@@ -159,13 +170,6 @@ function getFiveHandClass(hand) {
     return handClassConst.STRAIGHT;
   }
   
-/*[1, 2, 3, 4, 5] => [1, 1, 1, 1, 1] => NOTHING or HIGH_CARD 
-  [1, 2, 10, 10, 5] => [1, 1, 1, 2] => ONE_PAIR
-  [2, 2, 10, 10, 5] => [1, 2, 2] => TWO_PAIR
-  [7, 7, 7, 8, 9] => [1, 1, 3] => THREE_OF_A_KIND
-  [7, 7, 7, 8, 8] => [2, 3] => FULL_HOUSE
-  [3, 3, 3, 3, 2] => [1, 4] => FOUR_OF_A_KIND
-  */
   if(counts[2] == 3) {
     return handClassConst.THREE_OF_A_KIND;
   }
@@ -175,11 +179,8 @@ function getFiveHandClass(hand) {
   if(counts[3] == 2) {
     return handClassConst.ONE_PAIR;
   }
-  if(isHighCard) {
-    return handClassConst.HIGH_CARD;
-  }
   
-  return handClassConst.NOTHING;
+  return handClassConst.HIGH_CARD;
 }
 
 // diamonds (♦), clubs (♣), hearts (♥) and spades (♠)
@@ -212,6 +213,7 @@ function getHandClass(hand) {
   }
 }
 
+// !!! сравнить одинаковые комбинации compareEqualClasses()
 function compareHands(hand1, hand2) {
   var unionHand = hand1.concat(hand2); // объединяем два множества
 	
