@@ -1,4 +1,6 @@
-var p0, p1, p2, pBoard, edit1, edit2, editBoard, btn;
+var p0, p1, p2, pBoard, 
+    edit1, edit2, editBoard, 
+    btn;
 
 function setup() {
   noCanvas();
@@ -13,13 +15,12 @@ function setup() {
   edit2 = createInput('Kh As');
   
   pBoard = createP('стол');
-  editBoard = createInput('2c 3s 4d 5h 6c');
+  editBoard = createInput('3h 4s Qs Kh Ad');
   
   createElement('br');
   btn = createButton('ввод');
   createElement('br');
   pClass = createP('класс');
-  
   
   btn.mouseReleased(onPressBtn);
 }
@@ -34,18 +35,28 @@ function onPressBtn() {
   pClass.html("ошибка чтения Board");
   var handBoard = readHand(editBoard.value());
   
-  var str;
   var numberOfClass = getHandClass(handBoard);
+  
   if(numberOfClass == undefined) {
-    str = "numberOfClass = undefined";
+    var str = "numberOfClass = undefined";
   } else {
-    str = handClassString[numberOfClass];
+    var str = handClassString[numberOfClass];
   }
   pClass.html("на столе " + str);
 }
 
 function isWrongHand(hand) {
   // если карты в множестве hand одинаковы, то true
+  var copyHand = [];
+  for(var i = 0; i < hand.length; i++) {
+    copyHand.push(hand[i]);
+  }
+  copyHand.sort(sortNumber);
+  for(var i = 0; i < copyHand.length - 1; i++) {
+    if(copyHand[i] == copyHand[i + 1]) {
+      return true;
+    }
+  }
   return false;
 }
 
@@ -71,13 +82,52 @@ function isStraightRanks(handRanks) {
   return true;
 }
 
+function getIndexOf(elem, countArr) {
+  for(var i = 0; i < countArr.length; i++) {
+    var pair = countArr[i];
+    if(elem == pair.elem) {
+      return i;
+    }
+  }
+  return NOT_FOUND;
+}
+
+function rankArrayToCounts(rankArray) {
+/*[1, 2, 3, 4, 5] => [1, 1, 1, 1, 1] => [5] => NOTHING or HIGH_CARD 
+  [1, 2, 10, 10, 5] => [1, 1, 1, 2] => [3, 1](три единицы одна двойка) => ONE_PAIR
+  [2, 2, 10, 10, 5] => [1, 2, 2] => [1, 2] => TWO_PAIR
+  [7, 7, 7, 8, 9] => [1, 1, 3] => [2, 0, 1] => THREE_OF_A_KIND
+  [7, 7, 7, 8, 8] => [2, 3] => [0, 1, 1] => FULL_HOUSE
+  [3, 3, 3, 3, 2] => [1, 4] => [1, 0, 0, 1] => FOUR_OF_A_KIND
+  */
+  var b = [];
+  for(var i = 0; i < rankArray.length; i++) {
+    var elem = rankArray[i];
+    var elemIndexInB = getIndexOf(elem, b);
+    if(elemIndexInB != NOT_FOUND) {
+      b[elemIndexInB].count++;
+    } else {
+      b.push({elem, count: 1});
+    }
+  }
+  var b2 = b.map(pair => pair.count);
+  
+  b2.sort(sortNumber);
+  
+  return b2;
+}
+
+function sortNumber(a, b) {
+  return a - b;
+}
+
 function getFiveHandClass(hand) {
   var handSuits = hand.map(getSuit);
   var handRanks = hand.map(getRank);
   
-  handRanks.sort();
+  handRanks.sort(sortNumber);
   
-  console.log(handRanks);
+  console.log("handRanks = ", handRanks);
   
   var isHighCard = (handRanks[4] == ranks.length - 1);
   var isStraight = isStraightRanks(handRanks);
@@ -91,27 +141,43 @@ function getFiveHandClass(hand) {
   if(isStraight && isFlush) {
     return handClassConst.STRAIGHT_FLUSH;
   }
+
+  var counts = rankArrayToCounts(handRanks);
+  console.log("counts = ", counts);
   
-  /*
-  FOUR_OF_A_KIND
-  FULL_HOUSE
-  */
+  if(counts[1] == 4) {
+    return handClassConst.FOUR_OF_A_KIND;
+  }
+  if(counts[1] == 3) {
+    return handClassConst.FULL_HOUSE;
+  }
   
   if(isFlush) {
     return handClassConst.FLUSH;
   }
-  
   if(isStraight) {
     return handClassConst.STRAIGHT;
   }
   
-  /*
-  THREE_OF_A_KIND
-  TWO_PAIR
-  ONE_PAIR
-  HIGH_CARD
+/*[1, 2, 3, 4, 5] => [1, 1, 1, 1, 1] => NOTHING or HIGH_CARD 
+  [1, 2, 10, 10, 5] => [1, 1, 1, 2] => ONE_PAIR
+  [2, 2, 10, 10, 5] => [1, 2, 2] => TWO_PAIR
+  [7, 7, 7, 8, 9] => [1, 1, 3] => THREE_OF_A_KIND
+  [7, 7, 7, 8, 8] => [2, 3] => FULL_HOUSE
+  [3, 3, 3, 3, 2] => [1, 4] => FOUR_OF_A_KIND
   */
-
+  if(counts[2] == 3) {
+    return handClassConst.THREE_OF_A_KIND;
+  }
+  if(counts[1] == 2) {
+    return handClassConst.TWO_PAIR;
+  }
+  if(counts[3] == 2) {
+    return handClassConst.ONE_PAIR;
+  }
+  if(isHighCard) {
+    return handClassConst.HIGH_CARD;
+  }
   
   return handClassConst.NOTHING;
 }
