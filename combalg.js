@@ -1,6 +1,45 @@
 // комбинаторные алгоритмы
+function combSet(m, n) {
+  /*
+  combSet(m, n) = 
+    combSet(m, n - 1) ++ combSet(m - 1, n - 1)
+    
+  combSet(2, 5) = [
+          '0' + combSet(2, 4)
+          00011, 
+          00101, 
+          00110,
+          01001,
+          01010,
+          01100,
+          
+          '1' + combSet(1, 4)
+          10001,
+          10010,
+          10100,
+          11000
+        ]
+  */
+  if(m < 0 || n < 0 || m > n) {
+    throw new Error("неверные аргументы функции combSet");
+  }
+  if(n == m) {
+    return [(new Array(n)).fill(1).join('')]; // n = 3 => ['111']
+  }
+  if(m == 0) {
+    return [(new Array(n)).fill(0).join('')]; // n = 3 => ['000']
+  }
+  
+  var left = combSet(m, n - 1);
+  var right = combSet(m - 1, n - 1);
+  left = left.map(s => '0' + s);
+  right = right.map(s => '1' + s);
+  return left.concat(right);
+}
+
 function comb(m, n) {
-  // сочетания из m по n элементов
+  // сочетания из n по m элементов
+  // набор m элементов, выбранных из данного множества, содержащего n различных элементов.
   if(m < 0 || n < 0 || m > n) {
     throw new Error("неверные аргументы функции comb");
   }
@@ -21,24 +60,6 @@ function comb(m, n) {
   return res;
 }
 
-function combSet(m, n) {
-  /*
-  combSet(2, 5) = [
-          00011, 
-          00101, 
-          00110,
-          01001,
-          01010,
-          01100,
-          10001,
-          10010,
-          10100,
-          11000
-        ]
-  */
-  
-}
-
 function div(val, by) {
-    return (val - val % by) / by;
+  return (val - val % by) / by;
 }

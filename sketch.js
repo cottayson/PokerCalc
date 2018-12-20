@@ -13,7 +13,7 @@ function setup() {
   edit2 = createInput('Kh As');
   
   pBoard = createP('стол');
-  editBoard = createInput('2c 5c 8s Td 3h');
+  editBoard = createInput('2c 3s 4d 5h 6c');
   
   createElement('br');
   btn = createButton('ввод');

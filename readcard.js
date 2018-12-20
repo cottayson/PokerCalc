@@ -1,7 +1,7 @@
 // ********** CARDS TO STRING **************
 
 function getSuit(n) {
-  return floor(n / ranks.length);
+  return div(n, ranks.length);
 }
 
 function getRank(n) {
