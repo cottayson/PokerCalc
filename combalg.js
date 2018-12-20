@@ -23,15 +23,33 @@ function combSet(m, n) {
   if(m < 0 || n < 0 || m > n) {
     throw new Error("неверные аргументы функции combSet");
   }
-  if(n == m) {
-    return [(new Array(n)).fill(1).join('')]; // n = 3 => ['111']
-  }
   if(m == 0) {
-    return [(new Array(n)).fill(0).join('')]; // n = 3 => ['000']
+    return [(new Array(n)).fill(0)]; // n = 3 => [[0, 0, 0]]
+  }
+  if(n == m) {
+    return [(new Array(n)).fill(1)]; // n = 3 => [[1, 1, 1]]
   }
   
   var left = combSet(m, n - 1);
   var right = combSet(m - 1, n - 1);
+  left = left.map(arr => [0].concat(arr));
+  right = right.map(arr => [1].concat(arr));
+  return left.concat(right);
+}
+
+function combSetString(m, n) {
+  if(m < 0 || n < 0 || m > n) {
+    throw new Error("неверные аргументы функции combSetString");
+  }
+  if(m == 0) {
+    return [(new Array(n)).fill(0).join('')]; // n = 3 => ['000']
+  }
+  if(n == m) {
+    return [(new Array(n)).fill(1).join('')]; // n = 3 => ['111']
+  }
+  
+  var left = combSetString(m, n - 1);
+  var right = combSetString(m - 1, n - 1);
   left = left.map(s => '0' + s);
   right = right.map(s => '1' + s);
   return left.concat(right);
